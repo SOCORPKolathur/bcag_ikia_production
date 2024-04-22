@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:church_management_client/views/register_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +17,13 @@ class IntroView extends StatefulWidget {
 class _IntroViewState extends State<IntroView> {
 
   String churchLogo = '';
+  String churchName = '';
 
   getChurchDetails() async {
     var church = await FirebaseFirestore.instance.collection('ChurchDetails').get();
     setState(() {
       churchLogo = church.docs.first.get("logo");
+      churchName = church.docs.first.get("name");
     });
   }
 
@@ -40,10 +43,10 @@ class _IntroViewState extends State<IntroView> {
             height: size.height,
             width: size.width,
             decoration: const BoxDecoration(
-                image: DecorationImage(
+             /*   image: DecorationImage(
                   fit: BoxFit.fill,
                   image: AssetImage("assets/dolomite-alps-peaks-italy 1.png"),
-                )
+                )*/
             ),
           ),
           Container(
@@ -76,7 +79,7 @@ class _IntroViewState extends State<IntroView> {
                          borderRadius: BorderRadius.circular(200),
                          child: Padding(
                            padding: const EdgeInsets.all(8.0),
-                           child: Image.network(
+                           child: CachedNetworkImage( imageUrl:
                              churchLogo,
                              height: 110,
                              width: 110,
@@ -104,7 +107,7 @@ class _IntroViewState extends State<IntroView> {
                            ),
                          ),
                          Text(
-                           "CHURCH",
+                          churchName,
                            style: GoogleFonts.openSans(
                              fontSize: size.width/10.275,
                              fontWeight: FontWeight.w900,

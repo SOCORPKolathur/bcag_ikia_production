@@ -38,10 +38,10 @@ class _LoginViewState extends State<LoginView> {
             height: size.height,
             width: size.width,
             decoration: const BoxDecoration(
-                image: DecorationImage(
+               /* image: DecorationImage(
               fit: BoxFit.fill,
               image: AssetImage("assets/dolomite-alps-peaks-italy 1.png"),
-            )),
+            )*/),
           ),
           Container(
             height: size.height,
@@ -167,7 +167,9 @@ class _LoginViewState extends State<LoginView> {
   authenticate() async {
     bool isRegistered = false;
     var document = await FirebaseFirestore.instance.collection("Users").get();
+    print( emailController.text);
     for (int i = 0; i < document.docs.length; i++) {
+      print(document.docs[i]['phone']);
       if (document.docs[i]['phone'] == emailController.text) {
         isRegistered = true;
       }

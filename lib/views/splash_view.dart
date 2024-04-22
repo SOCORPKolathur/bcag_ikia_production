@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,18 @@ class _SplashViewState extends State<SplashView> {
   
   @override
   void initState() {
+    getChurchDetails();
     _navigateToNextScreen();
     super.initState();
+  } String churchLogo = '';
+  String churchName = '';
+
+  getChurchDetails() async {
+    var church = await FirebaseFirestore.instance.collection('ChurchDetails').get();
+    setState(() {
+      churchLogo = church.docs.first.get("logo");
+      churchName = church.docs.first.get("name");
+    });
   }
 
   Future<void> _navigateToNextScreen() async {
@@ -50,13 +61,13 @@ class _SplashViewState extends State<SplashView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset("assets/logo1.jpg"),
+            CachedNetworkImage(imageUrl: churchLogo),
             SizedBox(height: size.height/57.733333333),
             Text(
-              "BCAG CHURCH",
+              churchName,
               style: TextStyle(
                 color: Constants().primaryAppColor,
-                fontSize: size.width/10.275,
+                fontSize: 30,
                 letterSpacing: 8,
                 fontWeight: FontWeight.bold,
                 fontFamily: "ArgentumSans",

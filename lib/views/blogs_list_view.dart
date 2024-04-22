@@ -49,7 +49,7 @@ class _BlogsListViewState extends State<BlogsListView> {
         width: size.width,
         padding: const EdgeInsets.all(10),
         child: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("Blogs").snapshots(),// BlogFireCrud.fetchBlogs(),
+          stream: FirebaseFirestore.instance.collection("Blogs").orderBy("timestamp",descending: true).snapshots(),// BlogFireCrud.fetchBlogs(),
           builder: (ctx, snapshot) {
             if (snapshot.hasData) {
               List<BlogModel> blogs = [];

@@ -54,14 +54,14 @@ class UserModel {
     email = json['email'];
     maritialStatus = json['maritialStatus'];
     password = json['password'];
-    profession = json['profession'];
+   profession = json['profession'];
     baptizeDate = json['baptizeDate'];
     anniversaryDate = json['anniversaryDate'];
     bloodGroup = json['bloodGroup'];
     dob = json['dob'];
     locality = json['locality'];
     about = json['about'];
-    address = json['address'];
+    address = json['resaddress'];
     imgUrl = json['imgUrl'];
   }
 
@@ -84,7 +84,7 @@ class UserModel {
     data['dob'] = this.dob;
     data['locality'] = this.locality;
     data['about'] = this.about;
-    data['address'] = this.address;
+    data['resaddress'] = this.address;
     data['imgUrl'] = this.imgUrl;
     return data;
   }

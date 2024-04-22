@@ -67,7 +67,22 @@ class _NotificationsViewState extends State<NotificationsView> {
                       var visiblePercentage = visibilityInfo.visibleFraction * 6;
                       //if(visiblePercentage >= 0.2){
                         if(!snap.data!.docs[i]['isViewed']) {
-                          updateNottificationStatus(id:snap.data!.docs[i].id);
+                          print("viewed");
+                          if(snap.data!.docs[i]['subject']!="Request Approved") {
+                            updateNottificationStatus(
+                                id: snap.data!.docs[i].id);
+                          }
+                          else{
+                            FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(widget.userDocId)
+                                .collection("Notifications").doc(snap.data!.docs[i].id).update({
+                              "isViewed" : true
+                            });
+                            setState(() {
+
+                            });
+                          }
                         }
                       //}
                     },

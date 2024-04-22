@@ -384,7 +384,7 @@ class _ConnectViewState extends State<ConnectView> {
                                           if(isTrue){
                                             navigateToChatPage('ChorusChat','Choir',false,"",false,"");
                                           }else{
-                                            showInvalidAccessPopUp(context,"You are not a Quire member");
+                                            showInvalidAccessPopUp(context,"You are not a Choir member");
                                           }
                                         },
                                         child: ListTile(

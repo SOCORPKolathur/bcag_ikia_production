@@ -426,7 +426,7 @@ class ChatViewState extends State<ChatView> {
       //     }
       //   }
       //   break;
-      case "Quire":
+      case "Choir":
         for (var element in users.docs) {
           for(var chorus in choruses.docs){
             if(element['phone'] == chorus['phone'] && (element['fcmToken'] != null && element['fcmToken'] != "")){
@@ -455,7 +455,7 @@ class ChatViewState extends State<ChatView> {
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization':
-          'key=AAAAuzKqCXA:APA91bHpckZw1E2JuVr8MTPvoic6pDOOtxmTddTsSBno2ZYd3fMDo7kFmbsHHRfmuZurh0ut8n_46FgPAI5YdtfpwmJk85o9qeTMca9QgVhy7CiDUOdSer_ifyqaAQcGtF_oyBaX8UMQ',
+          'key=${Constants.apiKeyForNotification}',
         },
         body: jsonEncode(
           <String, dynamic>{

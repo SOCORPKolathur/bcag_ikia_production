@@ -15,6 +15,7 @@ class MessagesFireCrud {
 
   static Future<Response> addMessage({
     required String userId,
+    required String phone,
     required String content,
   }) async {
     Response response = Response();
@@ -28,6 +29,7 @@ class MessagesFireCrud {
       title: "Requested from $userId",
       timestamp: DateTime.now().millisecondsSinceEpoch,
       isViewed: false,
+      phone: phone
     );
     user.id = documentReferencer.id;
     var json = user.toJson();

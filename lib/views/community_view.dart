@@ -105,6 +105,9 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
                       setState(() {
                         searchString = val;
                       });
+                      print(searchString);
+                      getUsers();
+                      getMembers();
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -213,8 +216,268 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                    buildUserDataCardList(),
-                    buildMemberDataCardList()
+                    Column(children: [
+                      Expanded(
+                        child: usersList.isEmpty
+                            ? Center(
+                          child: Lottie.asset(
+                            'assets/no_data.json',
+                            fit: BoxFit.contain,
+                            height: size.height * 0.4,
+                            width: size.width * 0.7,
+                          ),
+                        )
+                            : ListView.builder(
+                          controller: _scrollController,
+                          itemCount: usersList.length,
+                          itemBuilder: (context, index) {
+                            UserModel user = UserModel.fromJson(usersList[index].data() as Map<String,dynamic>);
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+                              child: Card(
+                                color: Colors.white,
+                                child: SizedBox(
+                                  width: size.width,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {},
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.person_outline, color: Constants().primaryAppColor),
+                                              SizedBox(width: size.width/41.1),
+                                              Text(
+                                                "${user.firstName!} ${user.lastName!}",
+                                                style: GoogleFonts.amaranth(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: Constants()
+                                                      .getFontSize(context, 'M'),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: size.height/86.6),
+                                        InkWell(
+                                          onTap: () {},
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.person_pin_outlined,
+                                                  color: Constants().primaryAppColor),
+                                              SizedBox(width: size.width/41.1),
+                                              KText(
+                                                text:user.profession!,
+                                                style: GoogleFonts.amaranth(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: Constants()
+                                                        .getFontSize(context, 'S')),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: size.height/86.6),
+                                        SizedBox(
+                                          width: size.width,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Icon(Icons.phone, color: Constants().primaryAppColor),
+                                                  SizedBox(width: size.width/41.1),
+                                                  InkWell(
+                                                    onTap: () async {
+                                                      final Uri launchUri = Uri(
+                                                        scheme: 'tel',
+                                                        path:user.phone!,
+                                                      );
+                                                      await launchUrl(launchUri);
+                                                    },
+                                                    child: KText(
+                                                      text: user.phone!,
+                                                      style: TextStyle(
+                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: Constants()
+                                                              .getFontSize(context, 'S')),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                              Expanded(child: Container()),
+                                              InkWell(
+                                                  onTap: () async {
+                                                    final Uri launchUri = Uri.parse(
+                                                      'https://api.whatsapp.com/send?phone=${user.phone!}&text=Hii%20${user.firstName!} ${user.lastName!},%20I%20got%20your%20contact%20on%20IKIA',
+                                                    );
+                                                    await launchUrl(launchUri);
+                                                  },
+                                                  child: Icon(Icons.chat,color: Constants().primaryAppColor)),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      isLoading1
+                          ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.all(5),
+                        //color: Constants().primaryAppColor,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.asset(
+                              'assets/simpleloading.json',
+                              fit: BoxFit.contain,
+                              height: size.height * 0.1,
+                            ),
+                          ],
+                        ),
+                      )
+                          : Container()
+                    ]),
+                    Column(children: [
+    Expanded(
+    child: membersList.isEmpty
+    ? Center(
+    child: Lottie.asset(
+    'assets/no_data.json',
+    fit: BoxFit.contain,
+    height: size.height * 0.4,
+    width: size.width * 0.7,
+    ),
+    )
+        : ListView.builder(
+    controller: _scrollController1,
+    itemCount: membersList.length,
+    itemBuilder: (context, index) {
+    var user = membersList[index];
+    return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+    child: Card(
+    color: Colors.white,
+    child: SizedBox(
+    width: size.width,
+    child: Padding(
+    padding: const EdgeInsets.all(20.0),
+    child: Column(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    children: [
+    InkWell(
+    onTap: () {},
+    child: Row(
+    children: [
+    Icon(Icons.person_outline, color: Constants().primaryAppColor),
+    SizedBox(width: size.width/41.1),
+    Text(
+    "${user.get("firstName")!} ${user.get("lastName")!}",
+    style: GoogleFonts.amaranth(
+    fontWeight: FontWeight.w500,
+    fontSize: Constants()
+        .getFontSize(context, 'M'),
+    ),
+    )
+    ],
+    ),
+    ),
+    SizedBox(height: size.height/86.6),
+    InkWell(
+    onTap: () {},
+    child: Row(
+    children: [
+    Icon(Icons.person_pin_outlined,
+    color: Constants().primaryAppColor),
+    SizedBox(width: size.width/41.1),
+    KText(
+    text:user.get("position")!,
+    style: GoogleFonts.amaranth(
+    fontWeight: FontWeight.w500,
+    fontSize: Constants()
+        .getFontSize(context, 'S')),
+    )
+    ],
+    ),
+    ),
+    SizedBox(height: size.height/86.6),
+    SizedBox(
+    width: size.width,
+    child: Row(
+    mainAxisAlignment:
+    MainAxisAlignment.start,
+    children: [
+    Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+    Icon(Icons.phone, color: Constants().primaryAppColor),
+    SizedBox(width: size.width/41.1),
+    InkWell(
+    onTap: () async {
+    final Uri launchUri = Uri(
+    scheme: 'tel',
+    path:user.get("phone")!,
+    );
+    await launchUrl(launchUri);
+    },
+    child: KText(
+    text: user.get("phone")!,
+    style: TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: Constants()
+        .getFontSize(context, 'S')),
+    ),
+    )
+    ],
+    ),
+    Expanded(child: Container()),
+    InkWell(
+    onTap: () async {
+    final Uri launchUri = Uri.parse(
+    'https://api.whatsapp.com/send?phone=${user.get("phone")!}&text=Hii%20${user.get("firstName")!} ${user.get("lastName")!},%20I%20got%20your%20contact%20on%20IKIA',
+    );
+    await launchUrl(launchUri);
+    },
+    child: Icon(Icons.chat,color: Constants().primaryAppColor)),
+    ],
+    ),
+    ),
+    ],
+    ),
+    ),
+    ),
+    ),
+    );
+    },
+    ),
+    ),
+    isLoading2
+    ? Container(
+    width: MediaQuery.of(context).size.width,
+    padding: EdgeInsets.all(5),
+    //color: Constants().primaryAppColor,
+    child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+    Lottie.asset(
+    'assets/load.json',
+    fit: BoxFit.contain,
+    height: size.height * 0.1,
+    ),
+    ],
+    ),
+    )
+        : Container()
+    ]),
                   ],
                 ),
               ),
@@ -496,11 +759,12 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
     ]);
   }
 
+  bool empty= false;
   getUsers() async {
-    if (!hasMore) {
+ /*   if (!hasMore) {
       print('No More Users');
       return;
-    }
+    }*/
     if (isLoading1) {
       return;
     }
@@ -511,13 +775,14 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
     if (lastDocument == null) {
       querySnapshot = await FirebaseFirestore.instance
           .collection('Users')
-          .orderBy("timestamp", descending: true)
+          .where("isPrivacyEnabled",isEqualTo: false)
           .limit(documentLimit)
           .get();
-    } else {
+    }
+    else {
       querySnapshot = await FirebaseFirestore.instance
           .collection('Users')
-          .orderBy("timestamp", descending: true)
+          .where("isPrivacyEnabled",isEqualTo: false)
           .startAfterDocument(lastDocument!)
           .limit(documentLimit)
           .get();
@@ -527,14 +792,49 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
       hasMore = false;
     }
     lastDocument = querySnapshot.docs[querySnapshot.docs.length - 1];
+    if(searchString=="") {
+      if(empty==true){
+        setState(() {
+          usersList.clear();
+          empty=false;
+        });
+      }
+      print("Empty=====================");
       usersList.addAll(querySnapshot.docs);
+    }
+    else{
+      setState(() {
+        empty=true;
+      });
+      print("else=====================");
+      usersList.clear();
+      List<DocumentSnapshot> temp=[];
+     var que= await FirebaseFirestore.instance
+          .collection('Users')
+         .where("isPrivacyEnabled",isEqualTo: false)
+          .get();
+      for(int i=0;i<que.docs.length;i++) {
+        if (que.docs[i]["firstName"].toString().toLowerCase().startsWith(searchString.toLowerCase()) ||
+        que.docs[i]["lastName"].toString().toLowerCase().startsWith(searchString.toLowerCase()) ||
+    que.docs[i]["profession"].toString().toLowerCase().startsWith(searchString.toLowerCase())
+
+        ) {
+          temp.add(que.docs[i]);
+          print(que.docs[i]["firstName"]);
+        }
+      }
+      setState(() {
+        usersList.addAll(temp);
+      });
+    }
+    print(usersList[0]["firstName"]);
       isLoading1 = false;
     setState(() {
-
     });
   }
 
   getMembers() async {
+    print("sxdsf");
     if (!hasMore1) {
       print('No More Users');
       return;
@@ -552,7 +852,8 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
           .orderBy("timestamp", descending: true)
           .limit(documentLimit)
           .get();
-    } else {
+    }
+    else {
       querySnapshot = await FirebaseFirestore.instance
           .collection('Members')
           .orderBy("timestamp", descending: true)
@@ -567,15 +868,44 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
     lastDocument1 = querySnapshot.docs[querySnapshot.docs.length - 1];
     print("----------------------------------------------------------------------------------");
     print(searchString);
-    if(searchString != ""){
-      for(int i = 0; i < querySnapshot.docs.length; i ++){
-        if(querySnapshot.docs[i].get("firstName").toString().toLowerCase().startsWith(searchString.toLowerCase()) || querySnapshot.docs[i].get("lastName").toString().toLowerCase().startsWith(searchString.toLowerCase())){
-          membersList.add(querySnapshot.docs[i]);
-        }
+    if(searchString=="") {
+      if(empty==true){
+        setState(() {
+          membersList.clear();
+          empty=false;
+        });
       }
-    }else{
+      print("Empty=====================");
       membersList.addAll(querySnapshot.docs);
     }
+    else{
+      setState(() {
+        empty=true;
+      });
+      print("else=====================");
+      membersList.clear();
+      List<DocumentSnapshot> temp=[];
+      var que= await FirebaseFirestore.instance
+          .collection('Members')
+          .orderBy("timestamp", descending: true)
+          .get();
+      for(int i=0;i<que.docs.length;i++) {
+        if (
+        que.docs[i]["firstName"].toString().toLowerCase().startsWith(searchString.toLowerCase()) ||
+        que.docs[i]["lastName"].toString().toLowerCase().startsWith(searchString.toLowerCase()) ||
+        que.docs[i]["position"].toString().toLowerCase().startsWith(searchString.toLowerCase())
+
+
+        ) {
+          temp.add(que.docs[i]);
+          print(que.docs[i]["firstName"]);
+        }
+      }
+      setState(() {
+        membersList.addAll(temp);
+      });
+    }
+    print(membersList[0]["firstName"]);
 
     isLoading2 = false;
     setState(() {

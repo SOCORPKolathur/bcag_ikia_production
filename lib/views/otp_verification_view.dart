@@ -31,6 +31,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
   void initState() {
     super.initState();
     getUserLocation();
+    gettoken();
     _verifyphone();
   }
 
@@ -39,7 +40,40 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
   _verifyphone() async {
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: "+91${widget.phone}",
-        verificationCompleted: (PhoneAuthCredential credential) async {},
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          FirebaseAuth.instance.signInWithCredential(credential).then((value) async {
+            if (value.user != null) {
+              var document = await FirebaseFirestore.instance.collection('Users').get();
+              for (int i = 0; i < document.docs.length; i++) {
+                if (document.docs[i]['phone'] == widget.phone) {
+                  FirebaseFirestore.instance.collection('Users').doc(
+                      document.docs[i].id).update({
+                    "id": value.user!.uid,
+                    "fcmToken": fcmToken
+                  });
+                  setState(() {
+                    userId = document.docs[i].id;
+                  });
+                }
+              }
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MainView(phone: value.user!.phoneNumber!,
+                              uid: value.user!.uid,
+                              userDocId: userId)),
+                      (Route<dynamic> route) => false);
+              Fluttertoast.showToast(
+                  msg: "Logged In Successfully",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.TOP,
+                  backgroundColor: Constants().primaryAppColor,
+                  textColor: Colors.white,
+                  fontSize: 16.0
+              );
+            }
+          });
+        },
         verificationFailed: (FirebaseAuthException e) {
           print(e.message);
         },
@@ -83,6 +117,26 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
     print('${first.street},${first.subLocality}, ${first.locality},${first.administrativeArea}, ${first.postalCode}');
     return first;
   }
+
+  reglog() async {
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    FirebaseFirestore.instance.collection('LoginReports').doc().set({
+    "deviceId": androidInfo.id,
+    "deviceOs": Platform.isAndroid ? "Android" : Platform.isIOS ? "Ios" : "",
+    "ip": (await NetworkInterface.list()).first.addresses.first.address,
+    "location": '${first.street},${first.subLocality}, ${first.locality},${first.administrativeArea}, ${first.postalCode}',
+    "date" : DateFormat('dd-MM-yyyy').format(DateTime.now()),
+    "time" : DateFormat('hh:mm aa').format(DateTime.now()),
+    "timestamp": DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
+  String fcmToken="";
+  gettoken() async {
+    String? fcmTokenk = await FirebaseMessaging.instance.getToken();
+    fcmToken=fcmTokenk!;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -191,34 +245,18 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                                           smsCode: otp.text,
                               )).then((value) async {
                                 if (value.user != null) {
-                                  String? fcmToken = await FirebaseMessaging.instance.getToken();
-                                  var document = await FirebaseFirestore
-                                      .instance
-                                      .collection('Users')
-                                      .get();
-                                  for (int i = 0;
-                                      i < document.docs.length;
-                                      i++) {
+                                  var document = await FirebaseFirestore.instance.collection('Users').get();
+                                  for (int i = 0; i < document.docs.length; i++) {
                                     if (document.docs[i]['phone'] == widget.phone) {
-                                      FirebaseFirestore.instance
-                                          .collection('Users')
-                                          .doc(document.docs[i].id)
-                                          .update({"id": value.user!.uid,"fcmToken" : fcmToken});
+                                      FirebaseFirestore.instance.collection('Users').doc(document.docs[i].id).update({
+                                        "id": value.user!.uid,
+                                        "fcmToken" : fcmToken
+                                      });
                                      setState(() {
                                        userId = document.docs[i].id;
                                      });
                                     }
                                   }
-                                  AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-                                  FirebaseFirestore.instance.collection('LoginReports').doc().set({
-                                    "deviceId": androidInfo.id,
-                                    "deviceOs": Platform.isAndroid ? "Android" : Platform.isIOS ? "Ios" : "",
-                                    "ip": (await NetworkInterface.list()).first.addresses.first.address,
-                                    "location": '${first.street},${first.subLocality}, ${first.locality},${first.administrativeArea}, ${first.postalCode}',
-                                    "date" : DateFormat('dd-MM-yyyy').format(DateTime.now()),
-                                    "time" : DateFormat('hh:mm aa').format(DateTime.now()),
-                                    "timestamp": DateTime.now().millisecondsSinceEpoch,
-                                  });
                                   Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
                                           builder: (context) =>
