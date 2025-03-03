@@ -47,7 +47,7 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
   void initState() {
     _motionTabBarController = MotionTabBarController(
       initialIndex: 0,
-      length: 5,
+      length: 4,
       vsync: this,
     );
     super.initState();
@@ -77,12 +77,12 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
         header: ProductHeader(uid: widget.uid, userDocId: widget.userDocId),
         page: ProductsView(uid: widget.uid, userDocId: widget.userDocId),
       ),
-      BottomNavItem(
-        name: "Community",
-        icon: Icons.perm_contact_calendar_outlined,
-        header: const CommunityHeader(),
-        page: const CommunityView(),
-      ),
+      // BottomNavItem(
+      //   name: "Community",
+      //   icon: Icons.perm_contact_calendar_outlined,
+      //   header: const CommunityHeader(),
+      //   page: const CommunityView(),
+      // ),
       BottomNavItem(
         name: "Profile",
         icon: Icons.person,
@@ -171,14 +171,14 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
         list[1].name!,
         list[2].name!,
         list[3].name!,
-        list[4].name!
+        // list[4].name!
       ],
       icons: [
         list[0].icon!,
         list[1].icon!,
         list[2].icon!,
         list[3].icon!,
-        list[4].icon!
+        // list[4].icon!
       ],
       badges: [],
       tabSize: 50,
